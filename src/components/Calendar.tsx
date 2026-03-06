@@ -41,45 +41,8 @@ const TEMPLATES: TemplateConfig[] = [
     cardBg: '#FFFFFF',
     textColor: '#1F2937',
     accentColor: '#9CA3AF',
+    fontFamily: '"Times New Roman", Times, serif',
     headerStyle: 'modern',
-    cellStyle: 'rounded',
-    showFooter: true
-  },
-  {
-    id: 'midnight',
-    name: '暗夜黑金',
-    bgColor: '#000000',
-    bgImage: 'linear-gradient(to bottom right, #111827, #000000)',
-    cardBg: '#111827',
-    cardBorder: '1px solid #374151',
-    textColor: '#F9FAFB',
-    accentColor: '#D1D5DB', // Gold-ish can be achieved with specific hex if needed, sticking to grays for now or custom
-    headerStyle: 'classic',
-    cellStyle: 'rounded',
-    showFooter: true
-  },
-  {
-    id: 'cream',
-    name: '复古奶油',
-    bgColor: '#FFFBEB', // Amber-50
-    bgImage: 'linear-gradient(to bottom right, #FFFBEB, #FEF3C7)',
-    cardBg: '#FEFCE8', // Yellow-50ish
-    cardBorder: '2px solid #78350F', // Amber-900
-    textColor: '#78350F',
-    accentColor: '#92400E',
-    headerStyle: 'minimal',
-    cellStyle: 'sharp',
-    showFooter: true
-  },
-  {
-    id: 'morandi',
-    name: '莫兰迪',
-    bgColor: '#D6D2C4', // Muted beige
-    bgImage: 'linear-gradient(120deg, #D6D2C4 0%, #B8B09C 100%)',
-    cardBg: '#F0EFE9', // Off-white
-    textColor: '#5E503F', // Dark taupe
-    accentColor: '#8C7B6C', // Medium taupe
-    headerStyle: 'minimal',
     cellStyle: 'rounded',
     showFooter: true
   },
@@ -92,6 +55,76 @@ const TEMPLATES: TemplateConfig[] = [
     cardBorder: 'none',
     textColor: '#c44d44', // Traditional red
     accentColor: '#2f3e46', // Dark slate
+    fontFamily: '"Hiragino Mincho ProN", "Yu Mincho", "Songti SC", serif',
+    headerStyle: 'minimal',
+    cellStyle: 'rounded',
+    showFooter: true
+  },
+  {
+    id: 'aurora',
+    name: '北欧极光',
+    bgColor: '#F0FDFA', // Azure-50
+    bgImage: 'linear-gradient(to top right, #CCFBF1 0%, #E0F2FE 50%, #F0F9FF 100%)',
+    cardBg: 'rgba(255, 255, 255, 0.8)',
+    cardBorder: '1px solid rgba(255, 255, 255, 0.6)',
+    textColor: '#0F172A', // Slate-900
+    accentColor: '#0EA5E9', // Sky-500
+    fontFamily: '"Quicksand", "Nunito", sans-serif',
+    headerStyle: 'modern',
+    cellStyle: 'rounded',
+    showFooter: true
+  },
+  {
+    id: 'nostalgia',
+    name: '胶片回忆',
+    bgColor: '#E7E5E4', // Stone-200
+    bgImage: 'url("data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100\' height=\'100\' filter=\'url(%23noise)\' opacity=\'0.08\'/%3E%3C/svg%3E"), linear-gradient(to bottom, #E7E5E4, #D6D3D1)',
+    cardBg: '#F5F5F4',
+    cardBorder: '1px solid #A8A29E',
+    textColor: '#44403C', // Stone-700
+    accentColor: '#78716C', // Stone-500
+    fontFamily: '"Lora", "Merriweather", serif',
+    headerStyle: 'classic',
+    cellStyle: 'film',
+    showFooter: true
+  },
+  {
+    id: 'minimal',
+    name: '极简主义',
+    bgColor: '#FFFFFF',
+    bgImage: 'none',
+    cardBg: '#FFFFFF',
+    cardBorder: '1px solid #E5E7EB',
+    textColor: '#000000',
+    accentColor: '#6B7280',
+    fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+    headerStyle: 'modern',
+    cellStyle: 'sharp',
+    showFooter: true
+  },
+  {
+    id: 'cream',
+    name: '复古奶油',
+    bgColor: '#FFFBEB', // Amber-50
+    bgImage: 'linear-gradient(to bottom right, #FFFBEB, #FEF3C7)',
+    cardBg: '#FEFCE8', // Yellow-50ish
+    cardBorder: '2px solid #78350F', // Amber-900
+    textColor: '#78350F',
+    accentColor: '#92400E',
+    fontFamily: '"Courier New", Courier, monospace',
+    headerStyle: 'minimal',
+    cellStyle: 'sharp',
+    showFooter: true
+  },
+  {
+    id: 'morandi',
+    name: '莫兰迪',
+    bgColor: '#D6D2C4', // Muted beige
+    bgImage: 'linear-gradient(120deg, #D6D2C4 0%, #B8B09C 100%)',
+    cardBg: '#F0EFE9', // Off-white
+    textColor: '#5E503F', // Dark taupe
+    accentColor: '#8C7B6C', // Medium taupe
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
     headerStyle: 'minimal',
     cellStyle: 'rounded',
     showFooter: true
@@ -104,6 +137,35 @@ const TEMPLATES: TemplateConfig[] = [
     cardBg: '#FFFFFF',
     textColor: '#2D4F2F', // Forest Green
     accentColor: '#7AA375', // Sage Green
+    fontFamily: '"Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif',
+    headerStyle: 'classic',
+    cellStyle: 'rounded',
+    showFooter: true
+  },
+  {
+    id: 'popart',
+    name: '波普艺术',
+    bgColor: '#FFFFFF',
+    bgImage: 'radial-gradient(#E11D48 1px, transparent 1px), radial-gradient(#2563EB 1px, transparent 1px)', // Red & Blue dots
+    cardBg: '#FFFFFF',
+    cardBorder: '2px solid #000000',
+    textColor: '#E11D48', // Red-600
+    accentColor: '#2563EB', // Blue-600
+    fontFamily: '"Futura", "Century Gothic", sans-serif',
+    headerStyle: 'modern',
+    cellStyle: 'sharp',
+    showFooter: true
+  },
+  {
+    id: 'midnight',
+    name: '暗夜黑金',
+    bgColor: '#000000',
+    bgImage: 'linear-gradient(to bottom right, #111827, #000000)',
+    cardBg: '#111827',
+    cardBorder: '1px solid #374151',
+    textColor: '#F9FAFB',
+    accentColor: '#D1D5DB', // Gold-ish can be achieved with specific hex if needed, sticking to grays for now or custom
+    fontFamily: 'Impact, "Arial Black", sans-serif',
     headerStyle: 'classic',
     cellStyle: 'rounded',
     showFooter: true
@@ -470,14 +532,15 @@ const Calendar: React.FC = () => {
       {/* Hidden Export Template (Off-screen) */}
       <div 
         ref={exportRef}
-        className={`fixed flex ${orientation === 'landscape' ? 'flex-row' : 'flex-col'} items-center ${orientation === 'landscape' ? 'p-12 gap-12' : 'py-8 px-8'} box-border font-sans ${isExporting ? 'top-0 left-0 z-40' : 'top-0 left-[-9999px]'}`}
+        className={`fixed flex ${orientation === 'landscape' ? 'flex-row' : 'flex-col'} items-center ${orientation === 'landscape' ? 'p-12 gap-12' : 'py-8 px-8'} box-border ${isExporting ? 'top-0 left-0 z-40' : 'top-0 left-[-9999px]'}`}
         style={{ 
           width: orientation === 'landscape' ? '1920px' : '1080px', 
           height: orientation === 'landscape' ? '1080px' : '1440px', // 3:4 aspect ratio
           backgroundColor: currentTemplate.bgColor,
           backgroundImage: currentTemplate.bgImage,
           minHeight: orientation === 'landscape' ? '1080px' : '1440px',
-          color: currentTemplate.textColor
+          color: currentTemplate.textColor,
+          fontFamily: currentTemplate.fontFamily || 'sans-serif'
         }}
       >
         {/* Landscape Left Side: Info */}
