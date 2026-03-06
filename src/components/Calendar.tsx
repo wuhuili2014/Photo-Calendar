@@ -10,7 +10,7 @@ import {
   addMonths, 
   subMonths
 } from 'date-fns';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Download, Loader2, X, Palette, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Download, Loader2, X, Palette, Check, Layout } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import { db } from '../db/db';
 import PhotoCell from './PhotoCell';
@@ -113,6 +113,8 @@ const TEMPLATES: TemplateConfig[] = [
 const Calendar: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isExporting, setIsExporting] = useState(false);
+  const [showOrientationModal, setShowOrientationModal] = useState(false);
+  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [currentTemplateId, setCurrentTemplateId] = useState<string>('classic');
   const calendarRef = useRef<HTMLDivElement>(null);
@@ -171,6 +173,20 @@ const Calendar: React.FC = () => {
     setCurrentDate(new Date());
   };
 
+  const handleExportClick = () => {
+    if (isExporting) return;
+    setShowOrientationModal(true);
+  };
+
+  const handleOrientationSelect = (selectedOrientation: 'portrait' | 'landscape') => {
+    setOrientation(selectedOrientation);
+    setShowOrientationModal(false);
+    // Use setTimeout to allow state update and DOM render of exportRef with new dimensions
+    setTimeout(() => {
+      generateImage();
+    }, 100);
+  };
+
   // Function to generate image
   const generateImage = async () => {
     if (!exportRef.current) return;
@@ -197,6 +213,8 @@ const Calendar: React.FC = () => {
         cacheBust: true,
         pixelRatio: 2, 
         backgroundColor: currentTemplate.bgColor, 
+        width: orientation === 'landscape' ? 1920 : 1080,
+        height: orientation === 'landscape' ? 1080 : undefined, // Let height grow for portrait, fix for landscape
         style: {
           transform: 'scale(1)',
           // Double ensure style in the cloned node
@@ -216,12 +234,6 @@ const Calendar: React.FC = () => {
         exportRef.current.style.backgroundImage = '';
       }
     }
-  };
-
-  const handleExport = () => {
-    if (isExporting) return;
-    // Initial generation
-    generateImage();
   };
 
   // Re-generate when template changes (only if already in preview mode)
@@ -304,7 +316,7 @@ const Calendar: React.FC = () => {
             <span>今天</span>
           </button>
           <button 
-            onClick={handleExport}
+            onClick={handleExportClick}
             disabled={isExporting}
             className={`flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors cursor-pointer shadow-sm ${isExporting ? 'opacity-70 cursor-wait' : ''}`}
             title="导出图片"
@@ -314,6 +326,45 @@ const Calendar: React.FC = () => {
           </button>
         </div>
       </div>
+      
+      {/* Orientation Selection Modal */}
+      {showOrientationModal && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-md w-full transform scale-100 transition-all">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-gray-800 dark:text-white">选择海报方向</h3>
+              <button 
+                onClick={() => setShowOrientationModal(false)}
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                onClick={() => handleOrientationSelect('portrait')}
+                className="group flex flex-col items-center gap-3 p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200"
+              >
+                <div className="w-20 h-28 bg-gray-200 dark:bg-gray-700 rounded-md border-2 border-gray-300 dark:border-gray-600 group-hover:border-blue-400 shadow-sm flex items-center justify-center">
+                  <Layout size={24} className="text-gray-400 group-hover:text-blue-500" />
+                </div>
+                <span className="font-semibold text-gray-700 dark:text-gray-200 group-hover:text-blue-600">竖版海报</span>
+              </button>
+              
+              <button
+                onClick={() => handleOrientationSelect('landscape')}
+                className="group flex flex-col items-center gap-3 p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200"
+              >
+                <div className="w-28 h-20 bg-gray-200 dark:bg-gray-700 rounded-md border-2 border-gray-300 dark:border-gray-600 group-hover:border-blue-400 shadow-sm flex items-center justify-center">
+                  <Layout size={24} className="text-gray-400 group-hover:text-blue-500 transform rotate-90" />
+                </div>
+                <span className="font-semibold text-gray-700 dark:text-gray-200 group-hover:text-blue-600">横版海报</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Loading Overlay */}
       {isExporting && (
@@ -453,52 +504,111 @@ const Calendar: React.FC = () => {
       {/* Hidden Export Template (Off-screen) */}
       <div 
         ref={exportRef}
-        className={`fixed flex flex-col items-center py-12 px-8 box-border font-sans ${isExporting ? 'top-0 left-0 z-40' : 'top-0 left-[-9999px]'}`}
+        className={`fixed flex ${orientation === 'landscape' ? 'flex-row' : 'flex-col'} items-center ${orientation === 'landscape' ? 'p-12 gap-12' : 'py-12 px-8'} box-border font-sans ${isExporting ? 'top-0 left-0 z-40' : 'top-0 left-[-9999px]'}`}
         style={{ 
-          width: '1080px', 
+          width: orientation === 'landscape' ? '1920px' : '1080px', 
+          height: orientation === 'landscape' ? '1080px' : 'auto',
           backgroundColor: currentTemplate.bgColor,
           backgroundImage: currentTemplate.bgImage,
-          minHeight: '100vh',
+          minHeight: orientation === 'landscape' ? '1080px' : '100vh',
           color: currentTemplate.textColor
         }}
       >
-        {/* Main Card */}
+        {/* Landscape Left Side: Info */}
+        {orientation === 'landscape' && (
+          <div className="w-1/3 h-full flex flex-col justify-between py-4">
+            <div 
+              className="flex flex-col gap-2 pb-8"
+              style={{ 
+                borderBottom: `4px solid ${currentTemplate.textColor}`,
+                borderColor: currentTemplate.id === 'midnight' ? '#374151' : currentTemplate.id === 'cream' ? '#78350F' : '#000000',
+              }}
+            >
+              <h1 
+                className="text-9xl font-black tracking-tighter uppercase leading-none"
+                style={{ color: currentTemplate.textColor }}
+              >
+                {format(currentDate, 'MMM')}
+              </h1>
+              <h2 
+                className="text-7xl font-light"
+                style={{ color: currentTemplate.accentColor }}
+              >
+                {format(currentDate, 'yyyy')}
+              </h2>
+            </div>
+            
+            <div className="mt-auto">
+               <div 
+                  className="flex items-center gap-4 mb-8 opacity-60 font-medium tracking-[0.3em] text-xl"
+                  style={{ color: currentTemplate.id === 'midnight' ? '#4B5563' : '#9CA3AF' }}
+                >
+                  <span>COLLECT</span>
+                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: currentTemplate.id === 'midnight' ? '#4B5563' : '#9CA3AF' }}></span>
+                  <span>MEMORIES</span>
+                </div>
+                
+                {currentTemplate.showFooter && (
+                  <div 
+                    className="pt-8 flex justify-between items-center"
+                    style={{ 
+                      borderTop: `2px solid ${currentTemplate.accentColor}`,
+                      borderColor: currentTemplate.id === 'midnight' ? '#374151' : '#F3F4F6',
+                      color: currentTemplate.accentColor
+                    }}
+                  >
+                      <div className="flex flex-col">
+                        <span className="text-3xl font-bold tracking-tight" style={{ color: currentTemplate.textColor }}>Monthly Moments</span>
+                        <span className="text-lg tracking-wider uppercase mt-1">Photo Calendar Collection</span>
+                      </div>
+                  </div>
+                )}
+            </div>
+          </div>
+        )}
+
+        {/* Main Card / Grid Container */}
         <div 
-          className={`w-full flex-1 flex flex-col rounded-[40px] overflow-hidden p-10 transition-all duration-300 shadow-2xl`}
+          className={`
+            ${orientation === 'landscape' ? 'h-full flex-1' : 'w-full flex-1'} 
+            flex flex-col rounded-[40px] overflow-hidden p-10 transition-all duration-300 shadow-2xl
+          `}
           style={{ 
             backgroundColor: currentTemplate.cardBg,
             border: currentTemplate.cardBorder || 'none',
             boxShadow: currentTemplate.id === 'midnight' ? '0 25px 50px -12px rgba(0, 0, 0, 0.7)' : '0 25px 50px -12px rgba(0, 0, 0, 0.15)'
           }}
         >
-          {/* Header */}
-          <div 
-            className="flex justify-between items-baseline mb-6 pb-4"
-            style={{ 
-              borderBottom: `3px solid ${currentTemplate.textColor}`,
-              borderColor: currentTemplate.id === 'midnight' ? '#374151' : currentTemplate.id === 'cream' ? '#78350F' : '#000000',
-              textShadow: 'none'
-            }}
-          >
-              <h1 
-                className="text-7xl font-black tracking-tighter uppercase"
-                style={{ 
-                  color: currentTemplate.textColor,
-                  textShadow: 'none'
-                }}
-              >
-                {format(currentDate, 'MMM')}
-              </h1>
-              <h2 
-                className="text-5xl font-light"
-                style={{ 
-                  color: currentTemplate.accentColor,
-                  textShadow: 'none'
-                }}
-              >
-                {format(currentDate, 'yyyy')}
-              </h2>
-          </div>
+          {/* Portrait Header */}
+          {orientation === 'portrait' && (
+            <div 
+              className="flex justify-between items-baseline mb-6 pb-4"
+              style={{ 
+                borderBottom: `3px solid ${currentTemplate.textColor}`,
+                borderColor: currentTemplate.id === 'midnight' ? '#374151' : currentTemplate.id === 'cream' ? '#78350F' : '#000000',
+                textShadow: 'none'
+              }}
+            >
+                <h1 
+                  className="text-7xl font-black tracking-tighter uppercase"
+                  style={{ 
+                    color: currentTemplate.textColor,
+                    textShadow: 'none'
+                  }}
+                >
+                  {format(currentDate, 'MMM')}
+                </h1>
+                <h2 
+                  className="text-5xl font-light"
+                  style={{ 
+                    color: currentTemplate.accentColor,
+                    textShadow: 'none'
+                  }}
+                >
+                  {format(currentDate, 'yyyy')}
+                </h2>
+            </div>
+          )}
 
           {/* Grid Headers */}
           <div className="grid grid-cols-7 gap-3 mb-3">
@@ -525,7 +635,7 @@ const Calendar: React.FC = () => {
               return (
                 <div 
                   key={`export-${dateStr}`}
-                  className="h-full min-h-[140px]" // Ensure minimum height and full height usage
+                  className="h-full min-h-[100px]" // Adapted min-height
                 >
                   <PhotoCell
                     date={day}
@@ -540,8 +650,8 @@ const Calendar: React.FC = () => {
             })}
           </div>
           
-          {/* Footer in Card */}
-          {currentTemplate.showFooter && (
+          {/* Portrait Footer in Card */}
+          {orientation === 'portrait' && currentTemplate.showFooter && (
             <div 
               className="mt-8 pt-6 flex justify-between items-center"
               style={{ 
@@ -564,17 +674,19 @@ const Calendar: React.FC = () => {
           )}
         </div>
 
-        {/* Poster Footer */}
-        <div 
-          className="mt-10 font-medium tracking-[0.5em] text-lg flex items-center gap-4 opacity-60"
-          style={{ color: currentTemplate.id === 'midnight' ? '#4B5563' : '#9CA3AF' }}
-        >
-          <span>COLLECT</span>
-          <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: currentTemplate.id === 'midnight' ? '#4B5563' : '#9CA3AF' }}></span>
-          <span>YOUR</span>
-          <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: currentTemplate.id === 'midnight' ? '#4B5563' : '#9CA3AF' }}></span>
-          <span>MEMORIES</span>
-        </div>
+        {/* Portrait Poster Footer */}
+        {orientation === 'portrait' && (
+          <div 
+            className="mt-10 font-medium tracking-[0.5em] text-lg flex items-center gap-4 opacity-60"
+            style={{ color: currentTemplate.id === 'midnight' ? '#4B5563' : '#9CA3AF' }}
+          >
+            <span>COLLECT</span>
+            <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: currentTemplate.id === 'midnight' ? '#4B5563' : '#9CA3AF' }}></span>
+            <span>YOUR</span>
+            <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: currentTemplate.id === 'midnight' ? '#4B5563' : '#9CA3AF' }}></span>
+            <span>MEMORIES</span>
+          </div>
+        )}
       </div>
     </div>
   );
