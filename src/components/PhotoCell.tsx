@@ -56,7 +56,7 @@ const PhotoCell: React.FC<PhotoCellProps> = ({ date, currentMonth, photoBlob, on
   };
 
   if (!isCurrentMonth) {
-    return <div className="aspect-square bg-transparent"></div>;
+    return <div className={`aspect-square bg-transparent ${isShareMode ? 'hidden' : ''}`}></div>;
   }
 
   // Determine date display style
@@ -67,7 +67,7 @@ const PhotoCell: React.FC<PhotoCellProps> = ({ date, currentMonth, photoBlob, on
 
   return (
     <div 
-      className={`relative aspect-square border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden group 
+      className={`relative ${isShareMode ? 'h-full w-full' : 'aspect-square'} border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden group 
         ${!isShareMode ? 'cursor-pointer hover:shadow-md transition-shadow' : ''} 
         rounded-xl ${isShareMode ? 'border-none bg-gray-50' : ''}`}
       onClick={handleClick}
